@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuaderno Escolar Digital - Matemáticas II</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Canvas Confetti for Celebration Effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Patrick+Hand&family=Caveat:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Notebook Aesthetic */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e2e8f0;
+            background-image: 
+                linear-gradient(to right, rgba(148, 163, 184, 0.25) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(148, 163, 184, 0.25) 1px, transparent 1px);
+            background-size: 24px 24px;
+            color: #1e293b;
+        }
+
+        .font-handwritten {
+            font-family: 'Patrick Hand', cursive;
+        }
+
+        .font-certificate {
+            font-family: 'Caveat', cursive;
+        }
+
+        /* Red Margin Binder Effect */
+        .notebook-sheet {
+            position: relative;
+            background: #ffffff;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border-radius: 1.25rem;
+            border: 2px solid #cbd5e1;
+            overflow: hidden;
+        }
+
+        .notebook-sheet::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 3.5rem;
+            width: 2.5px;
+            background-color: #ef4444;
+            z-index: 20;
+        }
+
+        @media (max-width: 640px) {
+            .notebook-sheet::before {
+                left: 1.25rem;
+            }
+        }
+
+        /* Binder Hole Punch Visuals */
+        .binder-hole {
+            width: 14px;
+            height: 14px;
+            background-color: #94a3b8;
+            border-radius: 50%;
+            box-shadow: inset 2px 2px 4px rgba(0,0,0,0.4);
+        }
+
+        /* Interactive Tabs */
+        .nav-tab {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid transparent;
+        }
+        
+        .nav-tab.active {
+            background-color: #2563eb !important;
+            color: #ffffff !important;
+            border-color: #1d4ed8 !important;
+            box-shadow: 0 6px 16px -2px rgba(37, 99, 235, 0.45);
+            transform: translateY(-2px);
+        }
+
+        /* Action Buttons */
+        .btn-action {
+            transition: all 0.15s ease-in-out;
+            box-shadow: 0px 4px 0px #0f172a;
+        }
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0px 6px 0px #0f172a;
+        }
+        .btn-action:active {
+            transform: translateY(2px);
+            box-shadow: 0px 1px 0px #0f172a;
+        }
+
+        /* Certificate Print Styling */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            #printable-certificate, #printable-certificate * {
+                visibility: visible;
+            }
+            #printable-certificate {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                border: none !important;
+                box-shadow: none !important;
+            }
+        }
+
+        /* Roulette Animation */
+        @keyframes spinWheel {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(1440deg); }
+        }
+        .spinning {
+            animation: spinWheel 2.2s cubic-bezier(0.15, 0.85, 0.35, 1.0) forwards;
+        }
+    </style>
+</head>
+<body class="min-h-screen py-6 px-2 sm:px-6 lg:px-8">
+
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto notebook-sheet p-4 sm:p-8 ml-0 sm:ml-4">
+        
+        <!-- Binder Rings (Desktop) -->
+        <div class="hidden sm:flex justify-between absolute top-4 left-14 right-14 z-30 pointer-events-none">
+            <div class="binder-hole"></div>
+            <div class="binder-hole"></div>
+            <div class="binder-hole"></div>
+            <div class="binder-hole"></div>
+            <div class="binder-hole"></div>
+        </div>
+
+        <!-- Header & Profile Section -->
+        <header class="border-b-2 border-slate-200 pb-6 mb-6 pl-8 sm:pl-16 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-2">
+            <div>
+                <div class="inline-flex items-center gap-2 bg-blue-50 border border-blue-200 text-blue-700 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2">
+                    <span>✏️ Matemáticas II</span>
+                    <span>•</span>
+                    <span>2° Secundaria</span>
+                </div>
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight font-handwritten">Cuaderno de Estadística & Datos</h1>
+                <p class="text-xs sm:text-sm text-slate-500 mt-1">Medidas de Tendencia Central (x̅, x̃, x̂), Rango (R), Gráficas y Prácticas Recreativas</p>
+            </div>
+            
+            <!-- Student Profile Bar -->
+            <div class="bg-amber-50 border-2 border-amber-300 rounded-2xl p-3.5 shadow-sm w-full md:w-auto flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-2xl">👤</span>
+                    <div>
+                        <label for="student-name-input" class="block text-[10px] font-bold text-amber-900 uppercase tracking-wider">Nombre del Alumno:</label>
+                        <input type="text" id="student-name-input" value="Estudiante" oninput="updateStudentName()" class="bg-white border border-amber-300 rounded-lg px-2.5 py-1 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-500 w-36 sm:w-44">
+                    </div>
+                </div>
+                <div class="bg-amber-200/60 rounded-xl px-3 py-2 text-center flex sm:flex-col justify-between items-center">
+                    <span class="text-[10px] font-bold text-amber-900 uppercase">Dominio Global</span>
+                    <span id="header-mastery-text" class="text-xs font-black text-amber-950">0%</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation Bar -->
+        <nav class="flex flex-wrap gap-2 mb-8 pl-8 sm:pl-16 border-b border-slate-200 pb-4">
+            <button onclick="switchTab('theory')" id="tab-theory" class="nav-tab active px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-slate-700 border-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
+                <span>📖</span> Teoría & Símbolos
+            </button>
+            <button onclick="switchTab('lab')" id="tab-lab" class="nav-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-slate-700 border-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
+                <span>🧮</span> Laboratorio de Datos
+            </button>
+            <button onclick="switchTab('graphs')" id="tab-graphs" class="nav-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-slate-700 border-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
+                <span>📊</span> Gráficas Interactivas
+            </button>
+            <button onclick="switchTab('games')" id="tab-games" class="nav-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-slate-700 border-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
+                <span>🎮</span> Minijuegos
+            </button>
+            <button onclick="switchTab('quiz')" id="tab-quiz" class="nav-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-slate-700 border-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
+                <span>📝</span> Quiz Relámpago
+            </button>
+            <button onclick="switchTab('progress')" id="tab-progress" class="nav-tab px-3.5 py-2 rounded-xl font-bold text-xs sm:text-sm bg-white text-slate-700 border-slate-200 hover:bg-slate-50 flex items-center gap-1.5">
+                <span>📈</span> Mi Boleta & Diploma
+            </button>
+        </nav>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="pl-8 sm:pl-16 pr-2">
+
+            <!-- TAB 1: TEORÍA Y SÍMBOLOS -->
+            <section id="sec-theory" class="space-y-8">
+                <div class="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 p-6 rounded-2xl relative overflow-hidden">
+                    <span class="absolute right-4 top-4 text-5xl opacity-20 pointer-events-none">📐</span>
+                    <h2 class="text-2xl font-black text-blue-950 mb-2">¡Bienvenido, <span class="student-name-display text-blue-600">Estudiante</span>!</h2>
+                    <p class="text-slate-700 text-sm leading-relaxed">
+                        Este cuaderno interactivo contiene las lecciones de estadística descriptiva para 2° de secundaria. Domina las medidas que representan a un grupo de datos y aprende a analizar e interpretar gráficas de barras, líneas y sectores.
+                    </p>
+                </div>
+
+                <!-- Simbología Card Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Media x̅ -->
+                    <div class="bg-white p-6 rounded-2xl border-2 border-blue-200 shadow-sm relative">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Promedio General</span>
+                                <h3 class="text-xl font-bold text-slate-800 mt-1">Media Aritmética (x̅)</h3>
+                            </div>
+                            <span class="text-3xl font-black text-blue-600 bg-blue-100 w-12 h-12 rounded-xl flex items-center justify-center">x̅</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600 mb-4 leading-relaxed">
+                            Representa el valor de reparto equitativo. Se obtiene al sumar todos los valores numéricos y dividir entre el número total de observaciones (<strong>n</strong>).
+                        </p>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center font-mono text-xs text-slate-800 font-bold">
+                            Fórmula: x̅ = (Suma total de datos) / n
+                        </div>
+                    </div>
+
+                    <!-- Mediana x̃ -->
+                    <div class="bg-white p-6 rounded-2xl border-2 border-emerald-200 shadow-sm relative">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Dato Central</span>
+                                <h3 class="text-xl font-bold text-slate-800 mt-1">Mediana (x̃)</h3>
+                            </div>
+                            <span class="text-3xl font-black text-emerald-600 bg-emerald-100 w-12 h-12 rounded-xl flex items-center justify-center">x̃</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600 mb-4 leading-relaxed">
+                            Es el punto medio de la muestra. Se debe ordenar la lista de menor a mayor y ubicar la posición central. Si el número de datos es par, se promedian los 2 valores del centro.
+                        </p>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center font-mono text-xs text-slate-800 font-bold">
+                            Lugar central en lista ordenada de menor a mayor
+                        </div>
+                    </div>
+
+                    <!-- Moda x̂ -->
+                    <div class="bg-white p-6 rounded-2xl border-2 border-purple-200 shadow-sm relative">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="text-[10px] font-bold text-purple-600 bg-purple-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Mayor Frecuencia</span>
+                                <h3 class="text-xl font-bold text-slate-800 mt-1">Moda (x̂)</h3>
+                            </div>
+                            <span class="text-3xl font-black text-purple-600 bg-purple-100 w-12 h-12 rounded-xl flex items-center justify-center">x̂</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600 mb-4 leading-relaxed">
+                            Es el dato o los datos que más veces se repiten en el conjunto. Puede haber una moda (unimodal), dos (bimodal) o ninguna moda si todos se repiten igual.
+                        </p>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center font-mono text-xs text-slate-800 font-bold">
+                            x̂ = Valor con la frecuencia absoluta más alta
+                        </div>
+                    </div>
+
+                    <!-- Rango R -->
+                    <div class="bg-white p-6 rounded-2xl border-2 border-amber-200 shadow-sm relative">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <span class="text-[10px] font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-md uppercase tracking-wider">Dispersión</span>
+                                <h3 class="text-xl font-bold text-slate-800 mt-1">Rango (R)</h3>
+                            </div>
+                            <span class="text-3xl font-black text-amber-600 bg-amber-100 w-12 h-12 rounded-xl flex items-center justify-center">R</span>
+                        </div>
+                        <p class="text-xs sm:text-sm text-slate-600 mb-4 leading-relaxed">
+                            Mide qué tan alejados están los datos entre sí. Se calcula restando el valor mínimo absoluto al valor máximo de la colección.
+                        </p>
+                        <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 text-center font-mono text-xs text-slate-800 font-bold">
+                            Fórmula: R = Dato Máximo - Dato Mínimo
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Detailed Breakdown of Graph Construction -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-sm space-y-4">
+                    <div class="border-b pb-3">
+                        <span class="text-xs font-bold text-indigo-600 uppercase">Guía de Construcción</span>
+                        <h3 class="text-xl font-extrabold text-slate-800">📌 Composición y Componentes de una Gráfica Estadística</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="p-4 bg-indigo-50/70 border border-indigo-200 rounded-xl space-y-2">
+                            <span class="text-lg">↔️</span>
+                            <h4 class="font-bold text-slate-800 text-sm">1. Eje X (Horizontal)</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Contiene las <strong>categorías o variables</strong> estudiadas (ej. Calificaciones, Meses, Deportes). Las barras se colocan separadas por espacios uniformes.
+                            </p>
+                        </div>
+
+                        <div class="p-4 bg-purple-50/70 border border-purple-200 rounded-xl space-y-2">
+                            <span class="text-lg">↕️</span>
+                            <h4 class="font-bold text-slate-800 text-sm">2. Eje Y (Vertical)</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Muestra la <strong>escala de frecuencias</strong> (cantidad o porcentaje %). Siempre debe iniciar en cero (0) e incrementar con un intervalo regular (ej. 2 en 2, 5 en 5).
+                            </p>
+                        </div>
+
+                        <div class="p-4 bg-emerald-50/70 border border-emerald-200 rounded-xl space-y-2">
+                            <span class="text-lg">🏷️</span>
+                            <h4 class="font-bold text-slate-800 text-sm">3. Título y Etiquetas</h4>
+                            <p class="text-xs text-slate-600 leading-relaxed">
+                                Toda gráfica debe llevar un <strong>Título descriptivo</strong> y leyendas claras en ambos ejes para que cualquier lector interprete los resultados sin ambigüedad.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: LABORATORIO DE DATOS -->
+            <section id="sec-lab" class="space-y-8 hidden">
+                <div class="bg-blue-50 border-2 border-blue-200 p-6 rounded-2xl">
+                    <h2 class="text-2xl font-black text-blue-950 mb-1">Laboratorio Interactivo de Tareas y Datos 🧮</h2>
+                    <p class="text-slate-700 text-sm">Ingresa tus propias notas o números de tarea para resolver el problema paso a paso en vivo.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-sm space-y-6">
+                    <div>
+                        <label for="lab-input" class="block text-xs font-bold text-slate-700 uppercase mb-2">Ingresa tus datos numéricos (separados por comas):</label>
+                        <div class="flex flex-col sm:flex-row gap-3">
+                            <input type="text" id="lab-input" value="9, 10, 8, 7, 9, 10, 9, 6" class="flex-1 px-4 py-3 border-2 border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono text-sm font-semibold">
+                            <button onclick="runLabCalculations()" class="bg-blue-600 text-white font-bold px-8 py-3 rounded-xl btn-action text-sm whitespace-nowrap">
+                                ⚡ Resolver Paso a Paso
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Live Computed Output KPI Cards -->
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl text-center">
+                            <span class="text-xs font-bold text-blue-700 block mb-1">Media (x̅)</span>
+                            <span id="lab-out-mean" class="text-2xl font-black text-blue-900">8.50</span>
+                        </div>
+                        <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl text-center">
+                            <span class="text-xs font-bold text-emerald-700 block mb-1">Mediana (x̃)</span>
+                            <span id="lab-out-median" class="text-2xl font-black text-emerald-900">9.00</span>
+                        </div>
+                        <div class="bg-purple-50 border border-purple-200 p-4 rounded-xl text-center">
+                            <span class="text-xs font-bold text-purple-700 block mb-1">Moda (x̂)</span>
+                            <span id="lab-out-mode" class="text-2xl font-black text-purple-900">9</span>
+                        </div>
+                        <div class="bg-amber-50 border border-amber-200 p-4 rounded-xl text-center">
+                            <span class="text-xs font-bold text-amber-700 block mb-1">Rango (R)</span>
+                            <span id="lab-out-range" class="text-2xl font-black text-amber-900">4.00</span>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Explanation Step Box -->
+                    <div id="lab-steps-box" class="bg-slate-50 border border-slate-200 p-5 rounded-xl space-y-3 font-mono text-xs sm:text-sm text-slate-800 leading-relaxed">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: GRÁFICAS INTERACTIVAS -->
+            <section id="sec-graphs" class="space-y-8 hidden">
+                <div class="bg-purple-50 border-2 border-purple-200 p-6 rounded-2xl">
+                    <h2 class="text-2xl font-black text-purple-950 mb-1">Generador y Visualizador de Gráficas Vivas 📊</h2>
+                    <p class="text-slate-700 text-sm">Modifica los valores de frecuencia y observa cómo se transforman los ejes y sectores en tiempo real.</p>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-sm space-y-6">
+                    
+                    <!-- Controls and Inputs -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-1 space-y-4 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                            <h3 class="font-bold text-slate-800 text-sm border-b pb-2">✏️ Tabla de Frecuencias (Encuesta)</h3>
+                            
+                            <div class="space-y-2 text-xs">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-semibold text-slate-700">⚽ Fútbol:</span>
+                                    <input type="number" id="freq-0" value="35" oninput="updateInteractiveChart()" class="w-20 px-2 py-1 border rounded text-center font-bold">
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-semibold text-slate-700">🏀 Básquetbol:</span>
+                                    <input type="number" id="freq-1" value="20" oninput="updateInteractiveChart()" class="w-20 px-2 py-1 border rounded text-center font-bold">
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-semibold text-slate-700">🏐 Voleibol:</span>
+                                    <input type="number" id="freq-2" value="15" oninput="updateInteractiveChart()" class="w-20 px-2 py-1 border rounded text-center font-bold">
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-semibold text-slate-700">🏊 Natación:</span>
+                                    <input type="number" id="freq-3" value="25" oninput="updateInteractiveChart()" class="w-20 px-2 py-1 border rounded text-center font-bold">
+                                </div>
+                            </div>
+
+                            <div class="pt-2 border-t">
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Tipo de Gráfica:</label>
+                                <div class="grid grid-cols-3 gap-1">
+                                    <button onclick="setChartType('bar')" id="cbtn-bar" class="py-1.5 text-xs font-bold rounded bg-blue-600 text-white">Barras</button>
+                                    <button onclick="setChartType('line')" id="cbtn-line" class="py-1.5 text-xs font-bold rounded bg-slate-200 text-slate-700">Líneas</button>
+                                    <button onclick="setChartType('pie')" id="cbtn-pie" class="py-1.5 text-xs font-bold rounded bg-slate-200 text-slate-700">Pastel</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Canvas Box -->
+                        <div class="lg:col-span-2 relative h-80 flex items-center justify-center bg-white rounded-xl border border-slate-100 p-2">
+                            <canvas id="mainChartCanvas"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- TAB 4: MINIJUEGOS RECREATIVOS -->
+            <section id="sec-games" class="space-y-8 hidden">
+                <div class="bg-pink-50 border-2 border-pink-200 p-6 rounded-2xl">
+                    <h2 class="text-2xl font-black text-pink-950 mb-1">Zona de Minijuegos y Retos Recreativos 🎮</h2>
+                    <p class="text-slate-700 text-sm">Compite y diviértete acumulando puntos para tu boleta de calificaciones.</p>
+                </div>
+
+                <!-- GAME 1: MEMORAMA -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-sm space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3">
+                        <div>
+                            <span class="text-xs font-bold text-pink-600 uppercase">Juego #1</span>
+                            <h3 class="text-lg font-bold text-slate-800">🧠 Memorama de Conceptos y Símbolos</h3>
+                        </div>
+                        <div class="flex items-center gap-4 bg-slate-50 px-4 py-1.5 rounded-xl border border-slate-200 text-xs">
+                            <span class="font-bold text-slate-700">Movimientos: <strong id="memo-moves-count" class="text-pink-600 text-sm">0</strong></span>
+                            <button onclick="initMemoryGame()" class="bg-pink-600 text-white font-bold px-3 py-1 rounded-lg btn-action text-xs">Reiniciar</button>
+                        </div>
+                    </div>
+
+                    <div id="memo-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3 max-w-2xl mx-auto">
+                        <!-- Populated by JS -->
+                    </div>
+                </div>
+
+                <!-- GAME 2: RULETA ESTADÍSTICA -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-sm space-y-4">
+                    <div class="border-b pb-3">
+                        <span class="text-xs font-bold text-indigo-600 uppercase">Juego #2</span>
+                        <h3 class="text-lg font-bold text-slate-800">🎰 Ruleta de Muestras y Desafío de Opción Múltiple</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                        <div class="flex flex-col items-center justify-center p-6 bg-slate-50 rounded-2xl border border-slate-200">
+                            <div id="roulette-wheel-art" class="w-36 h-36 rounded-full border-8 border-indigo-600 bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 flex items-center justify-center text-white text-3xl font-black shadow-lg mb-4">
+                                🎲
+                            </div>
+                            <button onclick="spinRoulette()" id="btn-spin-roulette" class="bg-indigo-600 text-white font-bold px-6 py-2.5 rounded-xl btn-action text-xs">
+                                Girar Ruleta de Datos
+                            </button>
+                        </div>
+
+                        <div id="roulette-box" class="bg-indigo-50/70 p-5 rounded-2xl border border-indigo-200 text-center">
+                            <p class="text-xs font-semibold text-slate-500 py-6">Presiona "Girar Ruleta" para obtener una muestra y resolver su reto...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GAME 3: ARCADE CONTRARRELOJ -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-sm space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b pb-3">
+                        <div>
+                            <span class="text-xs font-bold text-emerald-600 uppercase">Juego #3</span>
+                            <h3 class="text-lg font-bold text-slate-800">⚡ Arcade Contrarreloj de la Mediana (x̃)</h3>
+                        </div>
+                        <div id="arcade-bar" class="flex items-center gap-4 bg-emerald-50 border border-emerald-200 px-4 py-1.5 rounded-xl text-xs font-bold text-emerald-950 hidden">
+                            <span>Puntos: <strong id="arcade-score" class="text-emerald-700 text-sm">0</strong></span>
+                            <span>Vidas: <strong id="arcade-lives" class="text-rose-600 text-sm">❤️❤️❤️</strong></span>
+                        </div>
+                    </div>
+
+                    <div id="arcade-viewport" class="bg-slate-900 rounded-2xl p-6 text-white text-center min-h-[200px] flex flex-col justify-center items-center">
+                        <button onclick="startArcade()" class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black px-8 py-3 rounded-xl btn-action text-sm">
+                            ▶️ Iniciar Desafío Arcade
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 5: QUIZ RELÁMPAGO -->
+            <section id="sec-quiz" class="space-y-8 hidden">
+                <div class="bg-indigo-50 border-2 border-indigo-200 p-6 rounded-2xl">
+                    <h2 class="text-2xl font-black text-indigo-950 mb-1">Quiz Evaluativo Relámpago 📝</h2>
+                    <p class="text-slate-700 text-sm">Responde estas 5 preguntas para evaluar tu comprensión teórica y práctica.</p>
+                </div>
+
+                <div id="quiz-card-box" class="bg-white p-6 sm:p-8 rounded-2xl border-2 border-slate-200 shadow-sm max-w-2xl mx-auto">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+
+            <!-- TAB 6: BOLETA Y DIPLOMA (NUEVO) -->
+            <section id="sec-progress" class="space-y-8 hidden">
+                <div class="bg-amber-50 border-2 border-amber-200 p-6 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-black text-amber-950 mb-1">Boleta de Calificaciones y Logros 📈</h2>
+                        <p class="text-amber-800 text-sm">Consulta tu registro de progresos y genera tu diploma escolar personalizado.</p>
+                    </div>
+                    <button onclick="triggerConfetti()" class="bg-amber-500 text-slate-950 font-black px-4 py-2 rounded-xl text-xs btn-action">🎉 Celebrar Logros</button>
+                </div>
+
+                <!-- Mastery Level Card -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-sm space-y-4">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <span class="text-xs font-bold text-slate-500 uppercase">Estado General de Desempeño</span>
+                            <h3 class="text-xl font-extrabold text-slate-800">Dominio de Temas: <span id="progress-mastery-num" class="text-blue-600">0%</span></h3>
+                        </div>
+                        <span id="badge-icon" class="text-4xl">🌱</span>
+                    </div>
+
+                    <!-- Progress Bar -->
+                    <div class="w-full bg-slate-100 h-5 rounded-full overflow-hidden border border-slate-200 p-0.5">
+                        <div id="progress-bar-fill" class="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-500 w-0"></div>
+                    </div>
+                </div>
+
+                <!-- Comprehensive Score Table -->
+                <div class="bg-white p-6 rounded-2xl border-2 border-slate-200 shadow-sm overflow-x-auto">
+                    <h3 class="font-bold text-slate-800 text-base mb-4 border-b pb-2">📋 Histórico de Desempeño por Actividad</h3>
+                    <table class="w-full text-left text-xs sm:text-sm">
+                        <thead>
+                            <tr class="bg-slate-50 text-slate-500 border-b">
+                                <th class="p-3">Actividad / Práctica</th>
+                                <th class="p-3">Estatus</th>
+                                <th class="p-3">Puntuación / Record</th>
+                                <th class="p-3">Puntos Otorgados</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 font-semibold text-slate-700">
+                            <tr>
+                                <td class="p-3">📝 Quiz Relámpago (Teoría y Práctica)</td>
+                                <td id="status-quiz" class="p-3 text-amber-600">Pendiente</td>
+                                <td id="score-quiz" class="p-3">0 / 5 Aciertos</td>
+                                <td class="p-3 font-bold text-blue-600">40% Max</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3">🧠 Memorama de Conceptos (x̅, x̃, x̂, R)</td>
+                                <td id="status-memo" class="p-3 text-amber-600">Pendiente</td>
+                                <td id="score-memo" class="p-3">-- Movimientos</td>
+                                <td class="p-3 font-bold text-blue-600">20% Max</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3">🎰 Ruleta de Muestras Estadísticas</td>
+                                <td id="status-roulette" class="p-3 text-amber-600">Pendiente</td>
+                                <td id="score-roulette" class="p-3">0 Retos Resueltos</td>
+                                <td class="p-3 font-bold text-blue-600">20% Max</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3">⚡ Arcade Contrarreloj</td>
+                                <td id="status-arcade" class="p-3 text-amber-600">Pendiente</td>
+                                <td id="score-arcade" class="p-3">0 Puntos</td>
+                                <td class="p-3 font-bold text-blue-600">20% Max</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Printable Certificate Printable Box -->
+                <div id="printable-certificate" class="bg-gradient-to-b from-amber-50 to-orange-50 border-8 border-double border-amber-300 p-8 rounded-3xl text-center space-y-4 shadow-md relative">
+                    <div class="flex justify-between items-center text-amber-800 text-xs font-bold uppercase tracking-widest border-b border-amber-200 pb-2">
+                        <span>Escuela Secundaria General</span>
+                        <span>Materia: Matemáticas II</span>
+                    </div>
+
+                    <h3 class="text-2xl sm:text-3xl font-extrabold text-amber-950 font-handwritten">Diploma de Reconocimiento Escolar</h3>
+                    <p class="text-xs text-amber-800">Se otorga con orgullo el presente certificado a:</p>
+                    
+                    <div class="text-3xl sm:text-4xl font-bold text-blue-900 border-b-2 border-blue-600 inline-block px-8 py-1 student-name-display font-certificate">
+                        Estudiante
+                    </div>
+
+                    <p class="text-xs text-slate-700 max-w-xl mx-auto leading-relaxed">
+                        Por haber demostrado excelente desempeño en la interpretación de la <strong>Media (x̅)</strong>, <strong>Mediana (x̃)</strong>, <strong>Moda (x̂)</strong>, <strong>Rango (R)</strong> y la composición de gráficas estadísticas.
+                    </p>
+
+                    <div class="flex justify-around items-center pt-4">
+                        <div>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase">Calificación Global</span>
+                            <span id="cert-score-display" class="text-xl font-black text-amber-900">0% Dominio</span>
+                        </div>
+                        <div>
+                            <span class="block text-[10px] font-bold text-slate-400 uppercase">Fecha de Expedición</span>
+                            <span id="cert-date-display" class="text-xs font-bold text-slate-700">18/10/2026</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 no-print">
+                        <button onclick="window.print()" class="bg-blue-600 text-white font-bold px-6 py-2.5 rounded-xl btn-action text-xs">
+                            🖨️ Imprimir / Descargar Certificate
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-6 border-t-2 border-slate-200 pl-8 sm:pl-16 text-center text-xs text-slate-400 font-semibold">
+            Cuaderno Escolar Digital de Matemáticas • 2° Año de Secundaria
+        </footer>
+    </div>
+
+    <!-- JAVASCRIPT APPLICATION CODE -->
+    <script>
+        // --- GLOBAL STATE & TRACKING ---
+        const userProgress = {
+            studentName: "Estudiante",
+            quizScore: 0,
+            quizCompleted: false,
+            memoMoves: null,
+            memoCompleted: false,
+            rouletteWins: 0,
+            arcadeHighScore: 0
+        };
+
+        // --- 1. STUDENT PROFILE UPDATE ---
+        function updateStudentName() {
+            const inputVal = document.getElementById('student-name-input').value.trim();
+            userProgress.studentName = inputVal !== "" ? inputVal : "Estudiante";
+            
+            document.querySelectorAll('.student-name-display').forEach(el => {
+                el.innerText = userProgress.studentName;
+            });
+        }
+
+        // --- 2. TAB NAVIGATION ---
+        function switchTab(targetTab) {
+            const tabs = ['theory', 'lab', 'graphs', 'games', 'quiz', 'progress'];
+            
+            tabs.forEach(t => {
+                const sec = document.getElementById(`sec-${t}`);
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === targetTab) {
+                    sec.classList.remove('hidden');
+                    btn.classList.add('active');
+                } else {
+                    sec.classList.add('hidden');
+                    btn.classList.remove('active');
+                }
+            });
+
+            // Lazy initialization
+            if (targetTab === 'graphs' && !window.mainChartInstance) {
+                initInteractiveChart();
+            }
+            if (targetTab === 'games' && !window.memoInitialized) {
+                initMemoryGame();
+            }
+            if (targetTab === 'quiz' && !window.quizInitialized) {
+                initQuizApp();
+            }
+            if (targetTab === 'lab') {
+                runLabCalculations();
+            }
+            if (targetTab === 'progress') {
+                recalculateProgressTable();
+            }
+        }
+
+        // --- 3. DATA LABORATORY CALCULATIONS (TAB 2) ---
+        function runLabCalculations() {
+            const raw = document.getElementById('lab-input').value;
+            const nums = raw.split(',').map(n => parseFloat(n.trim())).filter(n => !isNaN(n));
+
+            if (nums.length === 0) {
+                alert('Ingresa al menos un número válido separado por comas.');
+                return;
+            }
+
+            // Mean x̅
+            const sum = nums.reduce((a, b) => a + b, 0);
+            const mean = sum / nums.length;
+
+            // Median x̃
+            const sorted = [...nums].sort((a, b) => a - b);
+            let median = 0;
+            const mid = Math.floor(sorted.length / 2);
+            if (sorted.length % 2 === 0) {
+                median = (sorted[mid - 1] + sorted[mid]) / 2;
+            } else {
+                median = sorted[mid];
+            }
+
+            // Mode x̂
+            const freq = {};
+            let maxF = 0;
+            nums.forEach(n => {
+                freq[n] = (freq[n] || 0) + 1;
+                if (freq[n] > maxF) maxF = freq[n];
+            });
+            const modes = [];
+            for (let k in freq) {
+                if (freq[k] === maxF) modes.push(Number(k));
+            }
+            const modeText = maxF === 1 ? 'Sin moda' : modes.join(', ');
+
+            // Range R
+            const minVal = sorted[0];
+            const maxVal = sorted[sorted.length - 1];
+            const range = maxVal - minVal;
+
+            // Update UI
+            document.getElementById('lab-out-mean').innerText = mean.toFixed(2);
+            document.getElementById('lab-out-median').innerText = median.toFixed(2);
+            document.getElementById('lab-out-mode').innerText = modeText;
+            document.getElementById('lab-out-range').innerText = range.toFixed(2);
+
+            // Step explanations
+            document.getElementById('lab-steps-box').innerHTML = `
+                <p><strong>1. Ordenar muestra:</strong> [ ${sorted.join(', ')} ] (n = ${nums.length})</p>
+                <p><strong>2. Media (x̅):</strong> Suma (${sum}) ÷ Total (${nums.length}) = <strong>${mean.toFixed(2)}</strong></p>
+                <p><strong>3. Mediana (x̃):</strong> Elemento(s) en la posición central = <strong>${median.toFixed(2)}</strong></p>
+                <p><strong>4. Moda (x̂):</strong> Valor(es) con mayor frecuencia (${maxF} repeticiones) = <strong>${modeText}</strong></p>
+                <p><strong>5. Rango (R):</strong> Máximo (${maxVal}) - Mínimo (${minVal}) = <strong>${range.toFixed(2)}</strong></p>
+            `;
+        }
+
+        // --- 4. INTERACTIVE CHART JS (TAB 3) ---
+        let currentChartType = 'bar';
+
+        function initInteractiveChart() {
+            const ctx = document.getElementById('mainChartCanvas').getContext('2d');
+            const dataVals = [
+                parseFloat(document.getElementById('freq-0').value) || 0,
+                parseFloat(document.getElementById('freq-1').value) || 0,
+                parseFloat(document.getElementById('freq-2').value) || 0,
+                parseFloat(document.getElementById('freq-3').value) || 0
+            ];
+
+            window.mainChartInstance = new Chart(ctx, {
+                type: currentChartType,
+                data: {
+                    labels: ['Fútbol', 'Básquetbol', 'Voleibol', 'Natación'],
+                    datasets: [{
+                        label: 'Número de Alumnos (Frecuencia Y)',
+                        data: dataVals,
+                        backgroundColor: ['#3b82f6', '#10b981', '#a855f7', '#f59e0b'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: currentChartType === 'pie', position: 'bottom' } }
+                }
+            });
+        }
+
+        function updateInteractiveChart() {
+            if (!window.mainChartInstance) return;
+            const dataVals = [
+                parseFloat(document.getElementById('freq-0').value) || 0,
+                parseFloat(document.getElementById('freq-1').value) || 0,
+                parseFloat(document.getElementById('freq-2').value) || 0,
+                parseFloat(document.getElementById('freq-3').value) || 0
+            ];
+            window.mainChartInstance.data.datasets[0].data = dataVals;
+            window.mainChartInstance.update();
+        }
+
+        function setChartType(type) {
+            currentChartType = type;
+            ['bar', 'line', 'pie'].forEach(t => {
+                const btn = document.getElementById(`cbtn-${t}`);
+                if (t === type) {
+                    btn.className = "py-1.5 text-xs font-bold rounded bg-blue-600 text-white shadow";
+                } else {
+                    btn.className = "py-1.5 text-xs font-bold rounded bg-slate-200 text-slate-700";
+                }
+            });
+            if (window.mainChartInstance) {
+                window.mainChartInstance.destroy();
+                window.mainChartInstance = null;
+            }
+            initInteractiveChart();
+        }
+
+        // --- 5. GAME 1: MEMORAMA ---
+        const memoCardsData = [
+            { id: 1, sym: "x̅", text: "Media Aritmética" },
+            { id: 1, sym: "Suma ÷ n", text: "Promedio General" },
+            { id: 2, sym: "x̃", text: "Mediana" },
+            { id: 2, sym: "Posición Central", text: "Dato en la Mitad" },
+            { id: 3, sym: "x̂", text: "Moda" },
+            { id: 3, sym: "Mayor Frecuencia", text: "El que más se repite" },
+            { id: 4, sym: "R", text: "Rango" },
+            { id: 4, sym: "Máx - Mín", text: "Amplitud de datos" }
+        ];
+        let mCard1 = null, mCard2 = null, mLock = false, mMoves = 0, mMatches = 0;
+
+        function initMemoryGame() {
+            window.memoInitialized = true;
+            mMoves = 0; mMatches = 0;
+            document.getElementById('memo-moves-count').innerText = mMoves;
+            const grid = document.getElementById('memo-grid');
+            grid.innerHTML = '';
+
+            const shuffled = [...memoCardsData].sort(() => Math.random() - 0.5);
+            shuffled.forEach(card => {
+                const cardEl = document.createElement('div');
+                cardEl.className = "h-20 bg-blue-50 border-2 border-blue-200 rounded-xl flex flex-col items-center justify-center p-2 text-center cursor-pointer select-none hover:border-blue-400 transition-all";
+                cardEl.innerHTML = `<span class="text-xl">❓</span><span class="text-[10px] text-blue-900 font-bold">Voltear</span>`;
+                cardEl.onclick = () => flipMemoCard(cardEl, card);
+                grid.appendChild(cardEl);
+            });
+        }
+
+        function flipMemoCard(el, card) {
+            if (mLock || el.classList.contains('matched') || el.classList.contains('flipped')) return;
+
+            el.classList.add('flipped');
+            el.className = "h-20 bg-white border-2 border-blue-600 rounded-xl flex flex-col items-center justify-center p-2 text-center font-bold text-slate-800 shadow-md";
+            el.innerHTML = `<span class="text-lg font-black text-blue-600">${card.sym}</span><span class="text-[9px] text-slate-500 mt-0.5">${card.text}</span>`;
+
+            if (!mCard1) {
+                mCard1 = { el, card };
+                return;
+            }
+
+            mCard2 = { el, card };
+            mMoves++;
+            document.getElementById('memo-moves-count').innerText = mMoves;
+
+            if (mCard1.card.id === mCard2.card.id) {
+                mCard1.el.className = "h-20 bg-emerald-50 border-2 border-emerald-500 rounded-xl flex flex-col items-center justify-center p-2 text-center font-bold text-emerald-900 matched";
+                mCard2.el.className = "h-20 bg-emerald-50 border-2 border-emerald-500 rounded-xl flex flex-col items-center justify-center p-2 text-center font-bold text-emerald-900 matched";
+                mMatches++;
+                mCard1 = null; mCard2 = null;
+
+                if (mMatches === 4) {
+                    userProgress.memoCompleted = true;
+                    userProgress.memoMoves = mMoves;
+                    triggerConfetti();
+                }
+            } else {
+                mLock = true;
+                setTimeout(() => {
+                    mCard1.el.className = "h-20 bg-blue-50 border-2 border-blue-200 rounded-xl flex flex-col items-center justify-center p-2 text-center cursor-pointer text-slate-700";
+                    mCard1.el.innerHTML = `<span class="text-xl">❓</span><span class="text-[10px] text-blue-900 font-bold">Voltear</span>`;
+                    mCard2.el.className = "h-20 bg-blue-50 border-2 border-blue-200 rounded-xl flex flex-col items-center justify-center p-2 text-center cursor-pointer text-slate-700";
+                    mCard2.el.innerHTML = `<span class="text-xl">❓</span><span class="text-[10px] text-blue-900 font-bold">Voltear</span>`;
+                    mCard1 = null; mCard2 = null; mLock = false;
+                }, 800);
+            }
+        }
+
+        // --- 6. GAME 2: RULETA ESTADÍSTICA ---
+        let rouletteAnswer = null;
+
+        function spinRoulette() {
+            const wheel = document.getElementById('roulette-wheel-art');
+            const box = document.getElementById('roulette-box');
+
+            wheel.classList.add('spinning');
+            box.innerHTML = `<p class="text-xs font-bold text-indigo-900 py-6 animate-pulse">Generando muestra aleatoria...</p>`;
+
+            setTimeout(() => {
+                wheel.classList.remove('spinning');
+                buildRouletteChallenge();
+            }, 1200);
+        }
+
+        function buildRouletteChallenge() {
+            const sample = Array.from({ length: 5 }, () => Math.floor(Math.random() * 6) + 5);
+            const sorted = [...sample].sort((a, b) => a - b);
+            
+            // Randomly ask Mean or Range
+            const isMean = Math.random() > 0.5;
+            let correctVal = 0;
+            let title = '';
+
+            if (isMean) {
+                const sum = sample.reduce((a, b) => a + b, 0);
+                correctVal = Number((sum / 5).toFixed(2));
+                title = "Calcula la Media Aritmética (x̅):";
+            } else {
+                correctVal = sorted[4] - sorted[0];
+                title = "Calcula el Rango (R):";
+            }
+
+            rouletteAnswer = correctVal;
+
+            const opts = new Set([correctVal]);
+            while (opts.size < 4) {
+                let fake = Number((correctVal + (Math.random() * 4 - 2)).toFixed(2));
+                if (fake >= 0 && fake !== correctVal) opts.add(fake);
+            }
+            const shuffledOpts = Array.from(opts).sort(() => Math.random() - 0.5);
+
+            document.getElementById('roulette-box').innerHTML = `
+                <span class="text-[10px] font-bold text-indigo-600 uppercase bg-indigo-100 px-2 py-0.5 rounded">Muestra Obtenida</span>
+                <h4 class="text-xl font-black font-mono text-slate-800 my-2">[ ${sample.join(', ')} ]</h4>
+                <p class="text-xs font-bold text-slate-700 mb-3">${title}</p>
+                <div class="grid grid-cols-2 gap-2">
+                    ${shuffledOpts.map(o => `
+                        <button onclick="checkRouletteAns(${o}, this)" class="p-2.5 bg-white border border-indigo-200 rounded-xl font-bold text-xs hover:border-indigo-500">
+                            ${o}
+                        </button>
+                    `).join('')}
+                </div>
+                <div id="roulette-fb" class="mt-2 text-xs font-bold"></div>
+            `;
+        }
+
+        function checkRouletteAns(val, btn) {
+            const fb = document.getElementById('roulette-fb');
+            if (val === rouletteAnswer) {
+                btn.className = "p-2.5 bg-emerald-500 text-white rounded-xl font-bold text-xs";
+                fb.className = "mt-2 text-xs font-bold text-emerald-600";
+                fb.innerText = "¡Correcto! Excelente cálculo. 🎉";
+                userProgress.rouletteWins++;
+            } else {
+                btn.className = "p-2.5 bg-rose-500 text-white rounded-xl font-bold text-xs";
+                fb.className = "mt-2 text-xs font-bold text-rose-600";
+                fb.innerText = `Incorrecto. La respuesta era ${rouletteAnswer}. ❌`;
+            }
+        }
+
+        // --- 7. GAME 3: ARCADE ---
+        let aScore = 0, aLives = 3, aTimer = null, aAns = null;
+
+        function startArcade() {
+            aScore = 0; aLives = 3;
+            document.getElementById('arcade-bar').classList.remove('hidden');
+            updateArcadeStats();
+            nextArcadeRound();
+        }
+
+        function updateArcadeStats() {
+            document.getElementById('arcade-score').innerText = aScore;
+            document.getElementById('arcade-lives').innerText = '❤️'.repeat(aLives);
+        }
+
+        function nextArcadeRound() {
+            if (aLives <= 0) {
+                endArcade();
+                return;
+            }
+
+            const viewport = document.getElementById('arcade-viewport');
+            const sample = Array.from({ length: 5 }, () => Math.floor(Math.random() * 7) + 3);
+            const sorted = [...sample].sort((a, b) => a - b);
+            aAns = sorted[2]; // Find median
+
+            const opts = new Set([aAns]);
+            while (opts.size < 4) {
+                let fake = Math.floor(Math.random() * 10) + 1;
+                if (fake !== aAns) opts.add(fake);
+            }
+            const shuffled = Array.from(opts).sort(() => Math.random() - 0.5);
+
+            viewport.innerHTML = `
+                <div class="space-y-3 w-full max-w-sm">
+                    <span class="text-xs text-slate-400 font-bold block">Encuentra la Mediana (x̃):</span>
+                    <div class="text-xl font-black font-mono text-emerald-400 bg-slate-800 p-2.5 rounded-xl border border-slate-700">
+                        [ ${sample.join(', ')} ]
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        ${shuffled.map(o => `
+                            <button onclick="checkArcade(${o})" class="p-2.5 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-white font-bold rounded-xl text-xs">
+                                x̃ = ${o}
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkArcade(choice) {
+            if (choice === aAns) {
+                aScore += 10;
+                if (aScore > userProgress.arcadeHighScore) {
+                    userProgress.arcadeHighScore = aScore;
+                }
+            } else {
+                aLives--;
+            }
+            updateArcadeStats();
+            nextArcadeRound();
+        }
+
+        function endArcade() {
+            document.getElementById('arcade-viewport').innerHTML = `
+                <div class="space-y-2">
+                    <h4 class="text-xl font-black text-white">¡Fin del Juego!</h4>
+                    <p class="text-slate-300 text-xs">Puntuación Final: <strong class="text-emerald-400 text-base">${aScore} pts</strong></p>
+                    <button onclick="startArcade()" class="mt-2 bg-emerald-500 text-slate-950 font-bold px-4 py-2 rounded-xl text-xs btn-action">
+                        Volver a Intentar
+                    </button>
+                </div>
+            `;
+        }
+
+        // --- 8. QUIZ RELÁMPAGO (TAB 5) ---
+        const quizData = [
+            { q: "¿Cuál es el símbolo matemático directo de la Media Aritmética?", opts: ["x̅", "x̃", "x̂", "R"], ans: 0 },
+            { q: "¿En qué eje de la gráfica se coloca la escala numérica de frecuencias?", opts: ["Eje X", "Eje Y", "Eje Z", "Eje Cero"], ans: 1 },
+            { q: "Si la muestra es [4, 7, 10], ¿cuál es su Mediana (x̃)?", opts: ["4", "7", "10", "21"], ans: 1 },
+            { q: "¿Cómo se calcula el Rango (R)?", opts: ["Suma / Total", "Dato Máximo - Dato Mínimo", "El valor que más se repite", "Promedio del centro"], ans: 1 },
+            { q: "Si los datos son [8, 9, 9, 10], ¿cuál es la Moda (x̂)?", opts: ["8", "9", "10", "Sin moda"], ans: 1 }
+        ];
+
+        let qIndex = 0, qScore = 0;
+
+        function initQuizApp() {
+            window.quizInitialized = true;
+            qIndex = 0; qScore = 0;
+            renderQuizCard();
+        }
+
+        function renderQuizCard() {
+            const container = document.getElementById('quiz-card-box');
+
+            if (qIndex >= quizData.length) {
+                userProgress.quizCompleted = true;
+                userProgress.quizScore = qScore;
+                container.innerHTML = `
+                    <div class="text-center py-6 space-y-3">
+                        <span class="text-4xl">🏆</span>
+                        <h3 class="text-xl font-black text-slate-800">¡Quiz Completado!</h3>
+                        <p class="text-xs text-slate-600">Obtuviste <strong class="text-blue-600 text-base">${qScore} de 5 aciertos</strong>.</p>
+                        <button onclick="initQuizApp()" class="bg-blue-600 text-white font-bold px-6 py-2.5 rounded-xl text-xs btn-action">
+                            Reiniciar Quiz
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            const item = quizData[qIndex];
+            container.innerHTML = `
+                <div class="flex justify-between items-center text-xs font-bold text-slate-400 mb-3 border-b pb-2">
+                    <span>Pregunta ${qIndex + 1} / ${quizData.length}</span>
+                    <span>Puntuación: ${qScore}</span>
+                </div>
+                <h3 class="text-sm sm:text-base font-bold text-slate-800 mb-4">${item.q}</h3>
+                <div class="space-y-2">
+                    ${item.opts.map((o, idx) => `
+                        <button onclick="evalQuizAns(${idx})" class="w-full text-left p-3 rounded-xl border border-slate-200 hover:border-blue-500 font-semibold text-xs text-slate-700 flex justify-between">
+                            <span>${o}</span>
+                            <span class="font-mono text-slate-400">[ ${['A','B','C','D'][idx]} ]</span>
+                        </button>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        function evalQuizAns(chosen) {
+            if (chosen === quizData[qIndex].ans) qScore++;
+            qIndex++;
+            renderQuizCard();
+        }
+
+        // --- 9. PROGRESS & CERTIFICATE LOGIC (TAB 6) ---
+        function recalculateProgressTable() {
+            let totalMastery = 0;
+
+            // Quiz weight: 40%
+            if (userProgress.quizCompleted) {
+                const qPts = (userProgress.quizScore / 5) * 40;
+                totalMastery += qPts;
+                document.getElementById('status-quiz').className = "p-3 text-emerald-600 font-bold";
+                document.getElementById('status-quiz').innerText = "Completado";
+                document.getElementById('score-quiz').innerText = `${userProgress.quizScore} / 5 Aciertos`;
+            }
+
+            // Memo weight: 20%
+            if (userProgress.memoCompleted) {
+                totalMastery += 20;
+                document.getElementById('status-memo').className = "p-3 text-emerald-600 font-bold";
+                document.getElementById('status-memo').innerText = "Completado";
+                document.getElementById('score-memo').innerText = `${userProgress.memoMoves} Movimientos`;
+            }
+
+            // Roulette weight: 20%
+            if (userProgress.rouletteWins > 0) {
+                totalMastery += Math.min(userProgress.rouletteWins * 10, 20);
+                document.getElementById('status-roulette').className = "p-3 text-emerald-600 font-bold";
+                document.getElementById('status-roulette').innerText = "Activo";
+                document.getElementById('score-roulette').innerText = `${userProgress.rouletteWins} Resueltos`;
+            }
+
+            // Arcade weight: 20%
+            if (userProgress.arcadeHighScore > 0) {
+                totalMastery += Math.min(Math.floor(userProgress.arcadeHighScore / 2), 20);
+                document.getElementById('status-arcade').className = "p-3 text-emerald-600 font-bold";
+                document.getElementById('status-arcade').innerText = "Activo";
+                document.getElementById('score-arcade').innerText = `${userProgress.arcadeHighScore} pts`;
+            }
+
+            const finalPct = Math.min(Math.round(totalMastery), 100);
+
+            // Update UI elements
+            document.getElementById('progress-mastery-num').innerText = `${finalPct}%`;
+            document.getElementById('header-mastery-text').innerText = `${finalPct}%`;
+            document.getElementById('progress-bar-fill').style.width = `${finalPct}%`;
+            document.getElementById('cert-score-display').innerText = `${finalPct}% Dominio`;
+
+            // Date in certificate
+            document.getElementById('cert-date-display').innerText = new Date().toLocaleDateString('es-MX');
+
+            // Badge updates
+            const badgeEl = document.getElementById('badge-icon');
+            if (finalPct >= 90) badgeEl.innerText = "🥇 Master";
+            else if (finalPct >= 60) badgeEl.innerText = "🥈 Avanzado";
+            else if (finalPct >= 30) badgeEl.innerText = "🥉 Aprendiz";
+            else badgeEl.innerText = "🌱 Principiante";
+        }
+
+        // Celebration Confetti
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        // DOM Ready Load
+        window.addEventListener('DOMContentLoaded', () => {
+            updateStudentName();
+            runLabCalculations();
+        });
+    </script>
+</body>
+</html>
